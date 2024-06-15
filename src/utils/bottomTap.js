@@ -5,7 +5,7 @@ import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import Summary from '../screens/Summary';
+import History from '../screens/History';
 import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import NewMedicine from '../screens/NewMedicine';
@@ -124,7 +124,7 @@ function BottomTabNavigator() {
           if (route.name === 'Home') {
             iconName = 'briefcase-medical';
             size = 28;
-          } else if (route.name === 'Summary') {
+          } else if (route.name === 'History') {
             iconName = 'book-medical';
             size = 25;
           } else if (route.name === 'Profile') {
@@ -140,7 +140,7 @@ function BottomTabNavigator() {
       })}
     >
       <Tab.Screen name="Home" component={Home} options={{ headerShown: false }} />
-      <Tab.Screen name="Summary" component={Summary} options={{ headerShown: false }} />
+      <Tab.Screen name="History" component={History} options={{ headerShown: false }} />
       <Tab.Screen
         name="NewMedicine"
         component={NewMedicine}

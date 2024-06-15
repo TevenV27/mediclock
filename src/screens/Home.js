@@ -3,6 +3,7 @@ import React, { useState, useCallback, useContext } from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
 import Medicine from "../components/MedicineCard";
 import { getMedicines, deleteMedicine } from "../utils/firebase/medicines";
+import { addHistory } from "../utils/firebase/history";
 import { useFocusEffect } from '@react-navigation/native';
 import { ThemeContext } from '../utils/ThemeContext';
 
@@ -25,10 +26,12 @@ export default function Home({ navigation }) {
       fetchMedicines();
     }, [])
   );
-  const handleDeleteMedicine = async (medicineId) => {
-    console.log("Deleting medicine with ID:", medicineId);
+  const handleDeleteMedicine = async (medicine) => {
+
+    console.log("Deleting medicine with ID:", medicine.id);
     try {
-      await deleteMedicine(medicineId);
+      await deleteMedicine(medicine.id);
+      await addHistory(medicine,'delete');
       await fetchMedicines();
     } catch (error) {
       console.error("Error deleting medicine:", error);
@@ -41,7 +44,7 @@ export default function Home({ navigation }) {
       <FlatList
         data={medicines}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <Medicine dataMedicine={item} onDelete={() => handleDeleteMedicine(item.id)} />}
+        renderItem={({ item }) => <Medicine dataMedicine={item} onDelete={() => handleDeleteMedicine(item)} />}
       />
     </View>
   );

@@ -15,7 +15,8 @@ const firebaseConfig = {
   projectId: "mediclock-1403f",
   storageBucket: "mediclock-1403f.appspot.com",
   messagingSenderId: "131673253485",
-  appId: "1:131673253485:web:b3b7754d2ff0589ebd4164"
+  appId: "1:131673253485:web:b3b7754d2ff0589ebd4164",
+  measurementId: "G-Q2FR0P58KQ"
 };
 
 // Initialize Firebase

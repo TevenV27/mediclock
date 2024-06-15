@@ -6,7 +6,7 @@ import {
   Button,
   TouchableOpacity,
 } from "react-native";
-import React, { Component, useState, useEffect } from "react";
+import React, { Component, useState, useEffect, useContext } from "react";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
@@ -14,13 +14,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { onAuthStateChanged } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebase-config";
 import { getUser } from "../utils/firebase/user";
+import { ThemeContext } from '../utils/ThemeContext';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
-  const handleEditPress = () => {
-    // Handle what happens when "Edit" is pressed (navigation, etc.)
-    console.log("Edit button pressed"); // Example placeholder
-  };
+  const { isDarkTheme, toggleTheme, themeColors } = useContext(ThemeContext);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (user) => {
@@ -38,60 +36,56 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <View style={styles.basicInfo}>
-        <Image
-          source={{ uri: "https://i.imgur.com/t3n532j.jpg" }}
-          style={styles.profileImage}
-        />
-        <Text style={styles.nameText}>{user?.name}</Text>
-        <Text style={styles.infoText}>
-          22 year old dev from the Country Side
-        </Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', alignContent: 'center', gap: 10 }}>
+          <Image
+            source={require("../../assets/profile.png")}
+            style={styles.profileImage}
+          />
+          <View style={{ flex: 1, justifyContent: 'start', alignItems: 'start', marginTop: -20 }}>
+            <Text style={[styles.nameText, { color: themeColors.colors.text }]}>{'Nombre: ' + user?.name}</Text>
+            <Text style={[styles.infoText, { color: themeColors.colors.text, opacity: 0.8 }]}>
+              Edad: 22 Años
+            </Text>
+            <Text style={[styles.infoText, { color: themeColors.colors.text, opacity: 0.8 }]}>
+              Activo desde{" "}
+              {user?.metadata?.creationTime
+                ? new Date(user.metadata.creationTime).toLocaleDateString()
+                : "No creation time data"}
+            </Text>
+
+          </View>
+
+
+
+        </View>
+
         {/* Access user.metadata.creationTime instead */}
-        <Text style={styles.infoText}>
-          Activo desde{" "}
-          {user?.metadata?.creationTime
-            ? new Date(user.metadata.creationTime).toLocaleDateString()
-            : "No creation time data"}
-        </Text>
+
       </View>
       <View style={styles.infoSection}>
         <View style={styles.infoSectionTitle}>
-          <Text style={{ ...styles.infoSectionTitle, opacity: 0.9 }}>
+          <Text style={[styles.infoSectionTitle, { color: themeColors.colors.text }]}>
             Información personal
           </Text>
-          <TouchableOpacity onPress={handleEditPress}>
-            <FontAwesome6 name="edit" size={24} color="#525fe1" />
-          </TouchableOpacity>
         </View>
 
         <View style={styles.infoRow}>
           <View style={styles.infoIcon}>
-            <Entypo name="email" size={24} color="#525fe1" />
-            <Text style={{ ...styles.infoDetails, opacity: 0.6 }}>Email</Text>
+            <Entypo name="email" size={24} color={themeColors.colors.primary} />
+            <Text style={[styles.infoDetails, { color: themeColors.colors.text, opacity: 0.9 }]}>Correo</Text>
           </View>
-          <Text style={styles.infoDetails}>{user?.email}</Text>
+          <Text style={[styles.infoDetails, { color: themeColors.colors.text, opacity: 0.9 }]}>{user?.email}</Text>
         </View>
+
 
         <View style={styles.infoRow}>
           <View style={styles.infoIcon}>
-            <FontAwesome name="phone" size={24} color="#525fe1" />
-            <Text style={{ ...styles.infoDetails, opacity: 0.6 }}>
-              {" "}
-              Teléfono
-            </Text>
-          </View>
-
-          <Text style={styles.infoDetails}>{user?.metadata.phoneNumber}</Text>
-        </View>
-
-        <View style={styles.infoRow}>
-          <View style={styles.infoIcon}>
-            <Ionicons name="location-outline" size={24} color="#525fe1" />
-            <Text style={{ ...styles.infoDetails, opacity: 0.6 }}>
+            <Ionicons name="location-outline" size={24} color={themeColors.colors.primary} />
+            <Text style={[styles.infoDetails, { color: themeColors.colors.text, opacity: 0.9 }]}>
               Ubicación
             </Text>
           </View>
-          <Text style={styles.infoDetails}>Colombia</Text>
+          <Text style={[styles.infoDetails, { color: themeColors.colors.text, opacity: 0.9 }]}>Colombia</Text>
         </View>
       </View>
     </View>
@@ -107,17 +101,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: 100,
+    height: 100,
+    borderRadius: 150,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 1,
+
   },
   nameText: {
-    fontSize: 28,
+    fontSize: 18,
     fontWeight: "bold",
     marginTop: 20,
   },
   infoText: {
-    fontSize: 20,
+    fontSize: 14,
     marginTop: 10,
   },
   infoSection: {
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   infoSectionTitle: {
-    fontSize: 23,
+    fontSize: 20,
     fontWeight: "bold",
     flexDirection: "row", // Make the section row-based
     justifyContent: "space-between",
@@ -136,19 +139,15 @@ const styles = StyleSheet.create({
     marginTop: 15,
     flexDirection: "row", // Make the section row-based
     justifyContent: "space-between",
-
-    // Agregar padding horizontal
   },
 
   infoIcon: {
     flexDirection: "row",
     alignItems: "center",
-
-    // Agregar padding horizontal
   },
 
   infoDetails: {
     marginLeft: 15,
-    fontSize: 20,
+    fontSize: 14,
   },
 });

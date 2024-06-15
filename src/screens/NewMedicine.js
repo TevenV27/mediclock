@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { addMedicine } from "../utils/firebase/medicines";
+import { addHistory } from "../utils/firebase/history";
 import { useFocusEffect } from '@react-navigation/native';
 import { ThemeContext } from '../utils/ThemeContext';
 
@@ -41,8 +42,8 @@ export default function NewMedicine() {
           quantity: "",
           description: "",
           days: [],
-          initDate: new Date().toDateString(),
-          endDate: new Date().toDateString(),
+          initDate: new Date().toLocaleDateString(),
+          endDate: new Date().toLocaleDateString(),
         });
       };
     }, [])
@@ -65,7 +66,7 @@ export default function NewMedicine() {
       const currentDate = selectedDate || new Date();
       setMedicine((prevMedicine) => ({
         ...prevMedicine,
-        initDate: currentDate.toDateString(),
+        initDate: currentDate.toLocaleDateString(),
       }));
     } else {
       toggleDataPicker1();
@@ -79,7 +80,7 @@ export default function NewMedicine() {
       const currentDate = selectedDate || new Date();
       setMedicine((prevMedicine) => ({
         ...prevMedicine,
-        endDate: currentDate.toDateString(),
+        endDate: currentDate.toLocaleDateString(),
       }));
     } else {
       toggleDataPicker2();
@@ -121,6 +122,7 @@ export default function NewMedicine() {
 
     try {
       await addMedicine(med);
+      await addHistory(med, "create")
       Alert.alert("Éxito", "Medicina Creada");
     } catch (error) {
       Alert.alert("Error", "Error al crear la medicina: " + error.message);
